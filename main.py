@@ -1,7 +1,7 @@
 
 # git add .
 # git commit -m "your commit message"
-# git push origin main
+# git push origin master
 
 
 
@@ -25,6 +25,8 @@ class Game:
         self.p_pos = [50,200]
         self.p_base_speed = 5
         self.movement = [False,False] # Moving left, Moving right
+        self.move_counter = 0
+        self.p_img_index = 0
 
         # Jump mechanics
         self.p_jump = False
@@ -34,8 +36,9 @@ class Game:
         self.jump_strength = -10 # Jump strength
         self.ground = 300 # Ground level (TEMPORARY)
 
-        self.p_img = load_image('my_images/d 2/sprite_0 Background Removed.png')
-        self.p_img.set_colorkey((0,0,0))
+        self.p_imgs = [load_image('my_images/player/sprite_1.png'),load_image('my_images/player/sprite_2.png')]
+        #for img in self.p_imgs: img.set_colorkey((0,0,0))
+        self.p_imgs = [load_image('my_images/player/sprite_1.png')]
 
     def update(self):
         self.movement = [False,False]
@@ -57,8 +60,10 @@ class Game:
         # Handle movement
         if self.movement[0]:
             self.p_pos[0] += self.p_base_speed
+            self.move_counter += 1
         if self.movement[1]:
             self.p_pos[0] -= self.p_base_speed
+            self.move_counter += 1
 
         # Handle jumping status
         if self.p_jump:
@@ -71,12 +76,17 @@ class Game:
                 self.p_jump_vel = 0
                 print('landed!')
 
+        # Handle animation
+        if self.move_counter >=10:
+            self.p_img_index = (self.p_img_index+1)%len(self.p_imgs)
+            self.move_counter = 0
+
     def run(self):
 
         while True:
-            self.screen.fill((100,100,255))
+            self.screen.fill((255,255,255))
 
-            self.screen.blit(self.p_img,self.p_pos)
+            self.screen.blit(self.p_imgs[self.p_img_index],self.p_pos)
 
             # Quit button on window
             for event in pygame.event.get():
