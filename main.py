@@ -18,12 +18,16 @@ class Game:
         pygame.init() # Start Pygame
 
         pygame.display.set_caption('Dungeon_Game') # Title
-        self.screen = pygame.display.set_mode((800,600)) # Set up the screen dimensions
+
+        self.scale_factor = 2
+        self.screen_dimensions = (800,600)
+        self.screen = pygame.display.set_mode(self.screen_dimensions) # Set up the screen dimensions
+        self.display = pygame.Surface((self.screen_dimensions[0]//self.scale_factor,self.screen_dimensions[1]//self.scale_factor))
 
         self.clock = pygame.time.Clock() # Initialize the clock
 
         self.p_pos = [50,200]
-        self.p_base_speed = 5
+        self.p_base_speed = 5/self.scale_factor
         self.movement = [False,False] # Moving left, Moving right
         self.move_counter = 0
         self.p_img_index = 0
@@ -34,7 +38,7 @@ class Game:
 
         self.gravity = .5  # Gravity constant
         self.jump_strength = -10 # Jump strength
-        self.ground = 300 # Ground level (TEMPORARY)
+        self.ground = 300/self.scale_factor # Ground level (TEMPORARY)
 
         self.p_imgs = [load_image('my_images/player/sprite_1.png'),load_image('my_images/player/sprite_2.png')]
         #for img in self.p_imgs: img.set_colorkey((0,0,0))
@@ -84,9 +88,11 @@ class Game:
     def run(self):
 
         while True:
-            self.screen.fill((255,255,255))
+            self.display.fill((255,255,255)) # Color the display
 
-            self.screen.blit(self.p_imgs[self.p_img_index],self.p_pos)
+            self.display.blit(self.p_imgs[self.p_img_index],self.p_pos) # Put the player on the display
+
+            self.screen.blit(pygame.transform.scale(self.display,self.screen.get_size()),(0,0))
 
             # Quit button on window
             for event in pygame.event.get():
